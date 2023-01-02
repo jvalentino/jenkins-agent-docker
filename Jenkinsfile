@@ -10,7 +10,7 @@ pipeline {
         passwordVariable: 'DOCKER_PASSWORD', 
         usernameVariable: 'DOCKER_USERNAME')]) {
             sh '''
-                nohup dockerd &
+                nohup sudo dockerd &
                 echo $$ > dockerd.pid
                 sleep 10
                 docker build -t jvalentino2/jenkins-agent-docker .
