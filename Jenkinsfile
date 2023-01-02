@@ -10,6 +10,7 @@ pipeline {
         passwordVariable: 'DOCKER_PASSWORD', 
         usernameVariable: 'DOCKER_USERNAME')]) {
             sh '''
+                whoami
                 nohup dockerd &
                 echo $$ > dockerd.pid
                 sleep 10
