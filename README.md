@@ -36,6 +36,10 @@ If you are following along with JCASC (https://github.com/jvalentino/example-jen
 
 ![01](./wiki/02.png)
 
+**Note that you must select the box for it to be privaledged, otherwise dockerd won't start.**
+
+`Run container privileged`
+
 ...which then needs to become a part of jenkins.yaml:
 
 ```yaml
@@ -81,6 +85,8 @@ You can then verify it works by using a test job with the `docker` label:
 # Automate building it
 
 Consider that you first have to build and deploy this manually, but after that you can build a pipeline to automate all this. Consider that it will be using the current version of itself to build a new version of itself.
+
+
 
 
 
