@@ -9,7 +9,7 @@ pipeline {
         credentialsId: 'dockerhub', 
         passwordVariable: 'DOCKER_PASSWORD', 
         usernameVariable: 'DOCKER_USERNAME')]) {
-            sh """
+            sh '''
                 nohup dockerd &
                 echo $$ > dockerd.pid
                 docker build -t jvalentino2/jenkins-agent-docker .
@@ -17,7 +17,7 @@ pipeline {
                 docker tag jvalentino2/jenkins-agent-docker:latest jvalentino2/jenkins-agent-docker:1.${BUILD_NUMBER}
                 docker push jvalentino2/jenkins-agent-docker:1.${BUILD_NUMBER}
                 cat dockerd.pid | xargs kill -9
-            """
+            '''
         }
       }
     } // Publish
