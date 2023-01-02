@@ -86,9 +86,40 @@ You can then verify it works by using a test job with the `docker` label:
 
 Consider that you first have to build and deploy this manually, but after that you can build a pipeline to automate all this. Consider that it will be using the current version of itself to build a new version of itself.
 
+I also could not igure out how to get dockerd (the docker daemon) to start as a part of the container, so I had to handle both starting and stopping it as a part of the build process:
 
+```groovy
+pipeline {
+ agent { label 'docker' }
 
+  stages {
+    
+    stage('Publish') {
+      steps {
+        withCredentials([usernamePassword(
+        credentialsId: 'dockerhub', 
+        passwordVariable: 'DOCKER_PASSWORD', 
+        usernameVariable: 'DOCKER_USERNAME')]) {
+            sh '''
+                nohup dockerd &
+                sleep 10
+                docker build -t jvalentino2/jenkins-agent-docker .
+                docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+                docker tag jvalentino2/jenkins-agent-docker:latest jvalentino2/jenkins-agent-docker:1.${BUILD_NUMBER}
+                docker push jvalentino2/jenkins-agent-docker:1.${BUILD_NUMBER}
+                cat /var/run/docker.pid | xargs kill -9 || true
+            '''
+        }
+      }
+    } // Publish
 
+  }
+}
+```
+
+- I had to create a credential called dockerhub to store by ID and token for Dockerhub
+- It uses the BUILD_NUMBER to come up with a unique version number every time it runs
+- It starts dockerd, arbitrarily waits, continues on with the work, and then at the end kills dockerd
 
 # Working on it
 
