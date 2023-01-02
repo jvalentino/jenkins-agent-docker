@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   jenkins_agent_docker:
-    image: jvalentino/jenkins-agent-docker
+    image: jvalentino2/jenkins-agent-docker
     privileged: true
     user: root
     build: 

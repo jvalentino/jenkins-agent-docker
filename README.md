@@ -7,10 +7,80 @@ This project represents a Jenkins agent capable of building docker images.
 First, you have to build it:
 
 ```bash
-docker compose build
+docker build -t jvalentino2/jenkins-agent-docker .
 ```
 
-This will result in the local image of `jvalentino/jenkins-agent-docker`.
+This will result in the local image of `jvalentino2/jenkins-agent-docker`.
+
+...but now you have to publish it somewhere to pick it up. In my case, I am using Docker Hub, which means:
+
+1. Create a Docker ID: https://docs.docker.com/docker-id/
+2. Create a repository: https://docs.docker.com/docker-hub/repos/
+3. Create a personal access token: https://docs.docker.com/docker-hub/access-tokens
+
+You can then run these three commands to deploy it:
+
+```bash
+docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+docker tag jvalentino2/jenkins-agent-docker:latest jvalentino2/jenkins-agent-docker:1.0
+docker push jvalentino2/jenkins-agent-docker:1.0
+```
+
+In my case I know that it worked, because I can see this version now on https://hub.docker.com/repository/docker/jvalentino2/jenkins-agent-docker:
+
+![01](./wiki/01.png)
+
+## On Jenkins
+
+If you are following along with JCASC (https://github.com/jvalentino/example-jenkins-docker-jcasc-2), you just then add a new agent:
+
+![01](./wiki/02.png)
+
+...which then needs to become a part of jenkins.yaml:
+
+```yaml
+  clouds:
+  - docker:
+      dockerApi:
+        connectTimeout: 60
+        dockerHost:
+          uri: "tcp://socat:2375"
+        readTimeout: 60
+      name: "docker"
+      templates:
+      - connector:
+          attach:
+            user: "root"
+        dockerTemplateBase:
+          cpuPeriod: 0
+          cpuQuota: 0
+          image: "jenkins/agent"
+        instanceCapStr: "0"
+        labelString: "default"
+        name: "default"
+        pullStrategy: PULL_ALWAYS
+        pullTimeout: 300
+      - connector:
+          attach:
+            user: "root"
+        dockerTemplateBase:
+          cpuPeriod: 0
+          cpuQuota: 0
+          image: "jvalentino2/jenkins-agent-docker:1.0"
+        labelString: "docker"
+        pullStrategy: PULL_ALWAYS
+        pullTimeout: 300
+```
+
+You can then verify it works by using a test job with the `docker` label:
+
+![01](./wiki/03.png)
+
+![01](./wiki/04.png)
+
+# Automate building it
+
+Consider that you first have to build and deploy this manually, but after that you can build a pipeline to automate all this. Consider that it will be using the current version of itself to build a new version of itself.
 
 
 
