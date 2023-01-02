@@ -2,6 +2,10 @@
 
 This project represents a Jenkins agent capable of building docker images.
 
+To be clear: This is running Jenkins in a Docker Container, which uses another Docker Container to host build agents as Docker Containers, where this agent is a container implementation capable of building Docker images, which is then used to build itself.
+
+Yep, that doesn't make sense at all.
+
 # Using it
 
 First, you have to build it:
@@ -106,7 +110,9 @@ pipeline {
                 docker build -t jvalentino2/jenkins-agent-docker .
                 docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
                 docker tag jvalentino2/jenkins-agent-docker:latest jvalentino2/jenkins-agent-docker:1.${BUILD_NUMBER}
+                docker tag jvalentino2/jenkins-agent-docker:latest jvalentino2/jenkins-agent-docker:latest
                 docker push jvalentino2/jenkins-agent-docker:1.${BUILD_NUMBER}
+                docker push jvalentino2/jenkins-agent-docker:latest
                 cat /var/run/docker.pid | xargs kill -9 || true
             '''
         }
@@ -120,6 +126,7 @@ pipeline {
 - I had to create a credential called dockerhub to store by ID and token for Dockerhub
 - It uses the BUILD_NUMBER to come up with a unique version number every time it runs
 - It starts dockerd, arbitrarily waits, continues on with the work, and then at the end kills dockerd
+- There are also two images created for every run. The first is based on the build number, and the second is called "latest". That way if you refer to "latest" you will always get the current version.
 
 # Working on it
 
