@@ -9,5 +9,5 @@ services:
       dockerfile: Dockerfile
     container_name: jenkins_agent_docker
     volumes:
-     - /var/run/docker.sock:/var/run/docker.sock
+    # - /var/run/docker.sock:/var/run/docker.sock
      - ./workspace:/home/jenkins/workspace
