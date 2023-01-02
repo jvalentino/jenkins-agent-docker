@@ -1,0 +1,92 @@
+# Jenkins Docker Agent
+
+This project represents a Jenkins agent capable of building docker images.
+
+# Using it
+
+First, you have to build it:
+
+```bash
+docker compose build
+```
+
+This will result in the local image of `jvalentino/jenkins-agent-docker`.
+
+
+
+# Working on it
+
+I set this up so that I could run the container locally to verify that it all works.
+
+This means that there are two steps to doing this:
+
+## (1) Building the image
+
+```bash
+docker compose build
+```
+
+## (2) Running the container
+
+```bash
+docker compose run --rm jenkins_agent_docker
+```
+
+## (3) Verifying it works
+
+Once in the container, you can then verify that docker works:
+
+```bash
+root@0bf88427da2a:/home/jenkins# docker run hello-world
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (arm64v8)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+root@0bf88427da2a:/home/jenkins# 
+```
+
+When you exit the container, the container is also shut down.
+
+```bash
+root@0bf88427da2a:/home/jenkins# exit
+exit
+~/workspaces/personal/jenkins-agent-docker $ 
+```
+
+## (4) Testing image building
+
+Additionally I have inluded a workspace that you can verify that a build works:
+
+```bash
+root@dae975733446:/home/jenkins/workspace# docker build -t my_image .
+[+] Building 0.1s (5/5) FINISHED                                                                             
+ => [internal] load build definition from Dockerfile                                                    0.0s
+ => => transferring dockerfile: 54B                                                                     0.0s
+ => [internal] load .dockerignore                                                                       0.0s
+ => => transferring context: 2B                                                                         0.0s
+ => [internal] load metadata for docker.io/library/hello-world:latest                                   0.0s
+ => CACHED [1/1] FROM docker.io/library/hello-world                                                     0.0s
+ => exporting to image                                                                                  0.0s
+ => => exporting layers                                                                                 0.0s
+ => => writing image sha256:28109976132196580bf7c26b160365bfb99fa2cb7baa7eb039db2efd3d8244a7            0.0s
+ => => naming to docker.io/library/my_image         
+```
+

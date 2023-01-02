@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  jenkins_agent_docker:
+    image: jvalentino/jenkins-agent-docker
+    privileged: true
+    user: root
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: jenkins_agent_docker
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock
+     - ./workspace:/home/jenkins/workspace
