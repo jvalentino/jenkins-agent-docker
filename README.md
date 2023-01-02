@@ -75,6 +75,7 @@ If you are following along with JCASC (https://github.com/jvalentino/example-jen
           cpuPeriod: 0
           cpuQuota: 0
           image: "jvalentino2/jenkins-agent-docker:1.0"
+          privileged: true
         labelString: "docker"
         pullStrategy: PULL_ALWAYS
         pullTimeout: 300
